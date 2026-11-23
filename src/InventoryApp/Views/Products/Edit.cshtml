@@ -1,0 +1,76 @@
+@model InventoryApp.Models.ProductFormViewModel
+@{
+    ViewData["Title"] = $"Edit {Model.Sku}";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Products</a></li>
+        <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.Id">@Model.Sku</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-xl-7 col-lg-9">
+        <div class="page-head">
+            <div>
+                <h1 class="page-title">Edit product</h1>
+                <p class="page-subtitle">Changes apply to the product record; the movement ledger is never altered.</p>
+            </div>
+        </div>
+
+        <div class="app-card">
+            <div class="app-card-body">
+                <partial name="_FormErrors" />
+
+                <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="Sku"></label>
+                        <input class="form-control" asp-for="Sku" />
+                        <div class="form-text">Stored in upper case and must be unique.</div>
+                        <span class="text-danger small" asp-validation-for="Sku"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="Name"></label>
+                        <input class="form-control" asp-for="Name" />
+                        <span class="text-danger small" asp-validation-for="Name"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="Description"></label>
+                        <textarea class="form-control" asp-for="Description" rows="3"></textarea>
+                        <span class="text-danger small" asp-validation-for="Description"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="ReorderLevel"></label>
+                        <input class="form-control" asp-for="ReorderLevel" type="number" min="0" />
+                        <span class="text-danger small" asp-validation-for="ReorderLevel"></span>
+                    </div>
+
+                    <div class="form-check form-switch mb-4">
+                        <input class="form-check-input" asp-for="IsActive" role="switch" />
+                        <label class="form-check-label" asp-for="IsActive"></label>
+                        <div class="form-text">
+                            Deactivating keeps all movement history but blocks new movements.
+                            Products are never deleted.
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" type="submit">Save changes</button>
+                        <a class="btn btn-outline-secondary" asp-action="Details" asp-route-id="@Model.Id">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

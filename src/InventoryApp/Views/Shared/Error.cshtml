@@ -1,0 +1,33 @@
+@model InventoryApp.Models.ErrorViewModel
+@{
+    ViewData["Title"] = "Something went wrong";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="app-card">
+            <div class="empty-state">
+                <i class="bi bi-exclamation-octagon"></i>
+                <h1 class="page-title mb-2">Something went wrong</h1>
+
+                @if (Model?.StatusCode is int status)
+                {
+                    <p class="page-subtitle mb-3">The server returned status @status while handling your request.</p>
+                }
+                else
+                {
+                    <p class="page-subtitle mb-3">
+                        The request could not be completed. Nothing was saved, so you can safely try again.
+                    </p>
+                }
+
+                @if (Model?.ShowRequestId == true)
+                {
+                    <p class="mb-4"><span class="sku-chip">@Model.RequestId</span></p>
+                }
+
+                <a class="btn btn-primary" asp-controller="Products" asp-action="Index">Back to products</a>
+            </div>
+        </div>
+    </div>
+</div>

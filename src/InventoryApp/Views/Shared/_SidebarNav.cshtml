@@ -1,0 +1,29 @@
+@{
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var onProducts = controller == "Products" && action is "Index" or "Details" or "Edit";
+    var onCreate = controller == "Products" && action == "Create";
+}
+
+<a class="app-brand" asp-controller="Products" asp-action="Index">
+    <span class="app-brand-mark"><i class="bi bi-box-seam"></i></span>
+    <span>Inventory</span>
+</a>
+
+<nav class="app-nav">
+    <span class="app-nav-label">Stock</span>
+
+    <a class="app-nav-link @(onProducts ? "active" : null)" asp-controller="Products" asp-action="Index">
+        <i class="bi bi-grid-1x2"></i>
+        <span>Products</span>
+    </a>
+
+    <a class="app-nav-link @(onCreate ? "active" : null)" asp-controller="Products" asp-action="Create">
+        <i class="bi bi-plus-square"></i>
+        <span>New product</span>
+    </a>
+</nav>
+
+<div class="app-sidebar-footer">
+    Stock is derived from the movement ledger. Products are never deleted, only deactivated.
+</div>

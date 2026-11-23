@@ -1,0 +1,65 @@
+@model InventoryApp.Models.ProductFormViewModel
+@{
+    ViewData["Title"] = "New product";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Products</a></li>
+        <li class="breadcrumb-item active" aria-current="page">New product</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-xl-7 col-lg-9">
+        <div class="page-head">
+            <div>
+                <h1 class="page-title">New product</h1>
+                <p class="page-subtitle">Stock starts at zero and is built up from movements.</p>
+            </div>
+        </div>
+
+        <div class="app-card">
+            <div class="app-card-body">
+                <partial name="_FormErrors" />
+
+                <form asp-action="Create" method="post">
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="Sku"></label>
+                        <input class="form-control" asp-for="Sku" placeholder="e.g. BRK-PAD-001" autofocus />
+                        <div class="form-text">Stored in upper case and must be unique.</div>
+                        <span class="text-danger small" asp-validation-for="Sku"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="Name"></label>
+                        <input class="form-control" asp-for="Name" />
+                        <span class="text-danger small" asp-validation-for="Name"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="Description"></label>
+                        <textarea class="form-control" asp-for="Description" rows="3"></textarea>
+                        <span class="text-danger small" asp-validation-for="Description"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label" asp-for="ReorderLevel"></label>
+                        <input class="form-control" asp-for="ReorderLevel" type="number" min="0" />
+                        <div class="form-text">Stock at or below this level is flagged as low.</div>
+                        <span class="text-danger small" asp-validation-for="ReorderLevel"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" type="submit">Create product</button>
+                        <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

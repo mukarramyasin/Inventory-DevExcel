@@ -1,0 +1,21 @@
+@*
+    Renders form-level validation errors only - the ones added with an empty key, such as
+    "Cannot issue 15 units. Only 8 units are currently in stock." Field-specific errors are
+    shown next to their own inputs, so repeating them here would duplicate them, and the
+    built-in validation summary renders an empty alert box when every error is field-level.
+*@
+@{
+    var formErrors = ViewData.ModelState[string.Empty]?.Errors;
+}
+@if (formErrors is { Count: > 0 })
+{
+    <div class="alert alert-danger d-flex gap-2" role="alert">
+        <i class="bi bi-exclamation-triangle-fill mt-1"></i>
+        <div>
+            @foreach (var error in formErrors)
+            {
+                <div>@error.ErrorMessage</div>
+            }
+        </div>
+    </div>
+}

@@ -1,0 +1,196 @@
+@model InventoryApp.Models.ProductListViewModel
+@{
+    var paged = Model.Page;
+
+    // A short window of page numbers around the current page, so a long list does not
+    // render a hundred links.
+    var windowStart = Math.Max(1, paged.Page - 2);
+    var windowEnd = Math.Min(paged.TotalPages, windowStart + 4);
+    windowStart = Math.Max(1, windowEnd - 4);
+}
+
+<div class="row g-3 mb-4 row-cols-2 row-cols-md-3 row-cols-xl-5">
+    <div class="col">
+        <button type="button" class="kpi-card tone-neutral kpi-filter @(Model.Filter == ProductFilter.All ? "is-selected" : null)"
+                data-filter-card="All">
+            <span class="kpi-head">
+                <span class="kpi-label">All products</span>
+                <span class="kpi-icon"><i class="bi bi-grid-1x2"></i></span>
+            </span>
+            <span class="kpi-value">@Model.Kpis.All</span>
+        </button>
+    </div>
+
+    <div class="col">
+        <button type="button" class="kpi-card tone-success kpi-filter @(Model.Filter == ProductFilter.Active ? "is-selected" : null)"
+                data-filter-card="Active">
+            <span class="kpi-head">
+                <span class="kpi-label">Active</span>
+                <span class="kpi-icon"><i class="bi bi-check-circle"></i></span>
+            </span>
+            <span class="kpi-value">@Model.Kpis.Active</span>
+        </button>
+    </div>
+
+    <div class="col">
+        <button type="button" class="kpi-card tone-muted kpi-filter @(Model.Filter == ProductFilter.Inactive ? "is-selected" : null)"
+                data-filter-card="Inactive">
+            <span class="kpi-head">
+                <span class="kpi-label">Inactive</span>
+                <span class="kpi-icon"><i class="bi bi-pause-circle"></i></span>
+            </span>
+            <span class="kpi-value">@Model.Kpis.Inactive</span>
+        </button>
+    </div>
+
+    <div class="col">
+        <button type="button" class="kpi-card tone-warning kpi-filter @(Model.Filter == ProductFilter.LowStock ? "is-selected" : null)"
+                data-filter-card="LowStock">
+            <span class="kpi-head">
+                <span class="kpi-label">Low stock</span>
+                <span class="kpi-icon"><i class="bi bi-exclamation-triangle"></i></span>
+            </span>
+            <span class="kpi-value">@Model.Kpis.LowStock</span>
+        </button>
+    </div>
+
+    <div class="col">
+        <button type="button" class="kpi-card tone-danger kpi-filter @(Model.Filter == ProductFilter.OutOfStock ? "is-selected" : null)"
+                data-filter-card="OutOfStock">
+            <span class="kpi-head">
+                <span class="kpi-label">Out of stock</span>
+                <span class="kpi-icon"><i class="bi bi-slash-circle"></i></span>
+            </span>
+            <span class="kpi-value">@Model.Kpis.OutOfStock</span>
+        </button>
+    </div>
+</div>
+
+<div class="app-card">
+    <div class="app-card-header">
+        <span>
+            @if (paged.TotalCount == 0)
+            {
+                <text>No products</text>
+            }
+            else
+            {
+                <text>Showing @paged.FirstRowNumber&ndash;@paged.LastRowNumber of @paged.TotalCount</text>
+            }
+        </span>
+
+        <a class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1"
+           asp-action="ExportProducts"
+           asp-route-search="@Model.Search"
+           asp-route-filter="@Model.Filter"
+           title="Download every matching row as CSV">
+            <i class="bi bi-download"></i> Export CSV
+        </a>
+    </div>
+
+    @if (paged.TotalCount == 0)
+    {
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            @if (Model.HasFilter)
+            {
+                <p class="mb-3">No products match this filter.</p>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-filter-card="All">
+                    Show all products
+                </button>
+            }
+            else
+            {
+                <p class="mb-0">No products yet. Create one to get started.</p>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table app-table">
+                <thead>
+                    <tr>
+                        <th scope="col">SKU</th>
+                        <th scope="col">Name</th>
+                        <th scope="col" class="text-end">Current stock</th>
+                        <th scope="col" class="text-end">Reorder level</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in paged.Items)
+                    {
+                        <tr class="@(product.IsActive ? null : "is-inactive")">
+                            <td><span class="sku-chip">@product.Sku</span></td>
+                            <td>
+                                <span class="fw-medium">@product.Name</span>
+                                @if (!product.IsActive)
+                                {
+                                    <span class="pill pill-muted pill-plain ms-2">Inactive</span>
+                                }
+                            </td>
+                            <td class="text-end num fw-semibold">@product.CurrentStock</td>
+                            <td class="text-end num text-body-secondary">@product.ReorderLevel</td>
+                            <td><partial name="_StatusBadge" model="product.Status" /></td>
+                            <td class="text-end text-nowrap">
+                                <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@product.Id">
+                                    <i class="bi bi-list-ul"></i> Movements
+                                </a>
+                                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@product.Id"
+                                   title="Edit product">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                @if (product.IsActive)
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1"
+                                            data-set-active="false" data-product-id="@product.Id">
+                                        <i class="bi bi-slash-circle"></i> Deactivate
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1"
+                                            data-set-active="true" data-product-id="@product.Id">
+                                        <i class="bi bi-arrow-counterclockwise"></i> Activate
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (paged.TotalPages > 1)
+        {
+            <div class="app-card-footer">
+                <span class="text-body-secondary small">Page @paged.Page of @paged.TotalPages</span>
+
+                <nav aria-label="Product list pages">
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item @(paged.HasPrevious ? null : "disabled")">
+                            <button type="button" class="page-link" data-page="@(paged.Page - 1)" aria-label="Previous page">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                        </li>
+
+                        @for (var number = windowStart; number <= windowEnd; number++)
+                        {
+                            <li class="page-item @(number == paged.Page ? "active" : null)">
+                                <button type="button" class="page-link" data-page="@number">@number</button>
+                            </li>
+                        }
+
+                        <li class="page-item @(paged.HasNext ? null : "disabled")">
+                            <button type="button" class="page-link" data-page="@(paged.Page + 1)" aria-label="Next page">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
+    }
+</div>

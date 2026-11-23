@@ -1,0 +1,8 @@
+@*
+    Client-side validation, layered on top of the server-side rules rather than replacing
+    them. These scripts only mirror the DataAnnotations on the ViewModels; every rule is
+    still enforced again in InventoryService, so a request that bypasses the browser is
+    rejected exactly the same way.
+*@
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js" crossorigin="anonymous"></script>

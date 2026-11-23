@@ -1,0 +1,14 @@
+@model InventoryApp.Services.StockStatus
+@*
+    Presentation only: the status rule lives in StockStatusEvaluator and so does the
+    label, so the badge and the CSV export can never drift apart.
+*@
+@{
+    var pillClass = Model switch
+    {
+        StockStatus.OutOfStock => "pill-danger",
+        StockStatus.LowStock => "pill-warning",
+        _ => "pill-success"
+    };
+}
+<span class="pill @pillClass">@StockStatusEvaluator.Label(Model)</span>

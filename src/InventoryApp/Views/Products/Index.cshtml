@@ -1,0 +1,44 @@
+@model InventoryApp.Models.ProductListViewModel
+@{
+    ViewData["Title"] = "Products";
+}
+
+@*
+    Only the static chrome lives here: heading, search box, message area and the shell of
+    the list. Everything inside #productsPanel is rendered by the _ProductsPanel partial
+    and swapped in over AJAX, so the search box keeps focus and the page never reloads.
+*@
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title">Products</h1>
+        <p class="page-subtitle">Current stock is calculated from every recorded movement.</p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+        <div class="position-relative">
+            <i class="bi bi-search position-absolute top-50 translate-middle-y ms-3 text-body-tertiary"></i>
+            <input class="form-control ps-5" type="search" id="productSearch"
+                   value="@Model.Search" placeholder="Search SKU or name" autocomplete="off" />
+        </div>
+        <a class="btn btn-primary d-inline-flex align-items-center gap-2" asp-action="Create">
+            <i class="bi bi-plus-lg"></i> New product
+        </a>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+<div id="listMessage" class="alert d-none" role="status"></div>
+
+<div id="productsPanel"
+     data-list-url="@Url.Action("List")"
+     data-set-active-url="@Url.Action("SetActive")"
+     data-filter="@Model.Filter">
+    <partial name="_ProductsPanel" model="Model" />
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/products.js" asp-append-version="true"></script>
+}
