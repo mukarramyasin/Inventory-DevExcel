@@ -1,0 +1,9 @@
+bin/
+obj/
+.vs/
+*.user
+
+# Roslyn/MSBuild out-of-process build hosts, dropped into the project folder by
+# IDE and analyzer tooling. Generated, never source.
+BuildHost-net472/
+BuildHost-netcore/
